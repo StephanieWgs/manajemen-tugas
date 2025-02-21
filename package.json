@@ -1,0 +1,29 @@
+{
+  "name": "manajemen-tugas",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000m\u0000a\u0000n\u0000a\u0000j\u0000e\u0000m\u0000e\u0000n\u0000-\u0000t\u0000u\u0000g\u0000a\u0000s\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StephanieWgs/manajemen-tugas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StephanieWgs/manajemen-tugas/issues"
+  },
+  "homepage": "https://github.com/StephanieWgs/manajemen-tugas#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "method-override": "^3.0.0",
+    "mongodb": "^6.13.1",
+    "mysql": "^2.18.1",
+    "ws": "^8.18.1"
+  }
+}
