@@ -28,7 +28,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    res.render("register");
+  res.render("register");
+});
+
+app.get("/dashboard", (req, res) => {
+    res.render("dashboard");
   });
 
 app.listen(port, () => console.log(`Server running on port ${port}`));

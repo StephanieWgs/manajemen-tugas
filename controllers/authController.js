@@ -8,8 +8,9 @@ const authController = {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user_id = await User.create(name, username, hashedPassword);
-      const token = generateToken(user_id);
-      res.status(201).json({ token });
+      //   const token = generateToken(user_id);
+      //   res.status(201).json({ token });
+      res.redirect("/");
     } catch (error) {
       res.status(500).json({ message: "Registrasi Gagal" });
     }
@@ -19,23 +20,27 @@ const authController = {
     const { username, password } = req.body;
     try {
       const user = await User.findByUsername(username);
-      console.log("User dari database:", user);
       if (!user) {
         return res.status(401).json({ message: "Username atau Password Salah" });
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      console.log("Password valid:", isPasswordValid);
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Username atau Password Salah" });
       }
 
       const token = generateToken(user.id);
-      res.status(200).json({ token });
+      res.cookie("token", token, { httpOnly: true }); // Simpan token di cookie
+      res.redirect("/dashboard");
     } catch (error) {
       console.error("Error saat login:", error);
       res.status(500).json({ message: "Login Gagal" });
     }
+  },
+
+  logout: (req, res) => {
+    res.cookie("token", "", { expires: new Date(0) }); // Set cookie token jadi expired
+    res.redirect("/");
   },
 };
 
