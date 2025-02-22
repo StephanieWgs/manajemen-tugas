@@ -5,10 +5,13 @@ const bcrypt = require("bcryptjs");
 const authController = {
   register: async (req, res) => {
     const { name, username, password } = req.body;
+    console.log("Menerima request register:", req.body);
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
+      console.log("Password berhasil di-hash:", hashedPassword);
       const user_id = await User.create(name, username, hashedPassword);
       const token = generateToken(user_id);
+      console.log("User berhasil dibuat dengan ID:", user_id);
       res.status(201).json({ token });
     } catch (error) {
       res.status(500).json({ message: "Registrasi Gagal" });
