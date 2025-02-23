@@ -39,7 +39,7 @@ const authController = {
   },
 
   logout: (req, res) => {
-    res.cookie("token", "", { expires: new Date(0) }); // Set cookie token jadi expired
+    res.cookie("token", "", { expires: new Date(0), httpOnly: true }); // Hapus token dari cookie
     res.redirect("/");
   },
 };
