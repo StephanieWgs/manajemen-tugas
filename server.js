@@ -32,7 +32,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-    res.render("dashboard");
-  });
+  res.render("dashboard");
+});
 
 app.listen(port, () => console.log(`Server running on port ${port}`));

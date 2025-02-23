@@ -10,7 +10,7 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = verifyToken(token);
-        req.user = decoded;
+        req.user = decoded; // Simpam ID user ke dalam request
         next();
     } catch (error) {
         return res.status(401).json({ message: "Invalid Token" });

@@ -37,12 +37,14 @@
                 <tr>
                   <th scope="col" class="text-center" style="width: 50px">No.</th>
                   <th scope="col">Tugas</th>
-                  <th scope="col" class="text-center"style="width: 150px">Kategori</th>
-                  <th scope="col" class="text-center"style="width: 200px">Deadline</th>
-                  <th scope="col" class="text-center"style="width: 150px">Status</th>
+                  <th scope="col" class="text-center" style="width: 150px">Kategori</th>
+                  <th scope="col" class="text-center" style="width: 200px">Deadline</th>
+                  <th scope="col" class="text-center" style="width: 150px">Status</th>
                   <th scope="col" class="text-center" style="width: 150px">Aksi</th>
                 </tr>
               </thead>
+              <tbody id="taskList"></tbody>
+            </table>
           </div>
 
           <!-- Modal untuk tambah tugas -->
@@ -90,11 +92,11 @@
                 <div class="modal-body">
                   <div class="input-group mb-4">
                     <span class="input-group-text fw-semibold" style="width: 120px">Nama Tugas</span>
-                    <input type="text" id="title" class="form-control" required />
+                    <input type="text" id="editTitle" class="form-control" required />
                   </div>
                   <div class="input-group mb-4">
                     <span class="input-group-text fw-semibold" style="width: 120px">Kategori</span>
-                    <select class="form-select" id="category">
+                    <select class="form-select" id="editCategory">
                       <option value="Kuliah">Kuliah</option>
                       <option value="Organisasi">Organisasi</option>
                       <option value="Pribadi">Pribadi</option>
@@ -102,11 +104,11 @@
                   </div>
                   <div class="input-group mb-4">
                     <span class="input-group-text fw-semibold" style="width: 120px">Deadline</span>
-                    <input type="date" id="deadline" class="form-control" required />
+                    <input type="date" id="editDeadline" class="form-control" required />
                   </div>
                   <div class="input-group mb-4">
                     <span class="input-group-text fw-semibold" style="width: 120px">Status</span>
-                    <select class="form-select" id="status">
+                    <select class="form-select" id="editStatus">
                       <option value="Belum Selesai">Belum Selesai</option>
                       <option value="Selesai">Selesai</option>
                     </select>
@@ -114,7 +116,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                  <button type="button" class="btn btn-success" onclick="editTugas()">Tambah</button>
+                  <button type="button" class="btn btn-success" onclick="editTugas()">Simpan</button>
                 </div>
               </div>
             </div>
@@ -140,16 +142,43 @@
       </div>
     </div>
     <script>
-      // Fungsi untuk menampilkan modal tambah buku
+      // Fungsi untuk menampilkan modal tambah tugas
       function showAddModal() {
         new bootstrap.Modal(document.getElementById("modalTambah")).show();
+      }
+
+      //Tambah tugas
+      async function tambahTugas() {
+        const title = document.getElementById("title").value;
+        const category = document.getElementById("category").value;
+        const deadline = document.getElementById("deadline").value;
+
+        const response = await fetch("/api/tasks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ title, category, deadline }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const task_id = data.task_id;
+          document.getElementById("title").value = "";
+          document.getElementById("category").value = "Kuliah";
+          document.getElementById("deadline").value = "";
+          const modalTambah = bootstrap.Modal.getInstance(document.getElementById("modalTambah"));
+          modalTambah.hide();
+          loadTasks();
+        }
       }
 
       // Ganti isi dari Dropdown filter
       document.addEventListener("DOMContentLoaded", function () {
         const dropdownButton = document.querySelector(".dropdown-toggle");
         const dropdownItems = document.querySelectorAll(".dropdown-item");
-    
+
         dropdownItems.forEach((item) => {
           item.addEventListener("click", function (event) {
             event.preventDefault();
@@ -158,12 +187,70 @@
         });
       });
 
-    function logout() {
+      async function loadTasks() {
+        const token = localStorage.getItem("token");
+        try {
+          const response = await fetch("/api/tasks", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const data = await response.json();
+          const taskList = document.getElementById("taskList");
+
+          // Jika tidak ada tugas
+          if (!data.tasks || data.tasks.length === 0) {
+            taskList.innerHTML = "<tr><td colspan='6' class='text-center'>Tidak ada tugas... Anda bisa bermalas-malasan, mantap!</td></tr>";
+            return;
+          }
+
+          // Jika ada tugas
+          taskList.innerHTML = data.tasks
+            .map((task, index) => {
+              // Format tanggal agar lebih rapi
+              const deadlineFormatted = new Date(task.deadline).toLocaleDateString("id-ID", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              });
+
+              return `
+                <tr>
+                    <td class="text-center">${index + 1}</td>
+                    <td>${task.title}</td>
+                    <td class="text-center">${task.category}</td>
+                    <td class="text-center">${deadlineFormatted}</td>
+                    <td class="text-center">${task.status}</td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm" onclick="showEditModal(${task.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteModal(${task.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            })
+            .join("");
+        } catch (error) {
+          document.getElementById("taskList").innerHTML = `
+            <tr><td colspan='6' class='text-center text-danger'>Gagal memuat tugas... Coba lagi nanti.</td></tr>
+        `;
+        }
+      }
+
+      // Logout
+      function logout() {
         localStorage.removeItem("token");
-        window.location.href = "/"; 
-    }
+        window.location.href = "/";
+      }
+
+      document.addEventListener("DOMContentLoaded", loadTasks);
     </script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>

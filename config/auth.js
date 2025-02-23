@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const generateToken = (id) => {
-  return jwt.sign({ id: id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign({ id: id }, process.env.JWT_SECRET, { expiresIn: "1h" }); // Disini id akan disimpan di payload
 };
 
 const verifyToken = (token) => {
