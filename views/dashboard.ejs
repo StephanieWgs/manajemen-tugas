@@ -215,7 +215,6 @@
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            a,
           },
           body: JSON.stringify({ title, category, deadline, status }),
         });
@@ -261,10 +260,13 @@
           item.addEventListener("click", function (event) {
             event.preventDefault();
             dropdownButton.innerHTML = `<i class="bi bi-filter"></i> ${this.textContent}`;
+            selectedCategory = this.textContent;
+            loadTasks();
           });
         });
       });
 
+      let selectedCategory = "Semua";
       async function loadTasks() {
         const token = localStorage.getItem("token");
         try {
@@ -284,8 +286,17 @@
             return;
           }
 
+          // Filter tugas berdasarkan kategori yang dipilih
+          const filteredTasks = selectedCategory === "Semua" ? data.tasks : data.tasks.filter((task) => task.category === selectedCategory);
+
+          // Jika tidak ada tugas yang sesuai dengan kategori yang dipilih
+          if (filteredTasks.length === 0) {
+            taskList.innerHTML = "<tr><td colspan='6' class='text-center'>Tidak ada tugas dalam kategori ini...</td></tr>";
+            return;
+          }
+
           // Jika ada tugas
-          taskList.innerHTML = data.tasks
+          taskList.innerHTML = filteredTasks
             .map((task, index) => {
               // Format tanggal agar lebih rapi
               const deadlineFormatted = new Date(task.deadline).toLocaleDateString("id-ID", {
@@ -323,6 +334,12 @@
       // Logout
       function logout() {
         localStorage.removeItem("token");
+        window.location.href = "/";
+      }
+
+      // Cek token
+      const token = localStorage.getItem("token");
+      if (!token) {
         window.location.href = "/";
       }
 
