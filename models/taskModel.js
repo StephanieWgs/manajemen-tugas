@@ -10,6 +10,11 @@ const Task = {
         return result;
     },
 
+    findTaskById: async(id) => {
+        const [result] = await db.promise().query('SELECT * FROM tasks WHERE id = ?', [id]);
+        return result[0];
+    },
+
     update: async(id, title, category, deadline, status) => {
         await db.promise().query('UPDATE tasks SET title = ?, category = ?, deadline = ?, status = ? WHERE id = ?', [title, category, deadline, status, id]);
     },

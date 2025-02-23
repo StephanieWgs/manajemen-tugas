@@ -23,6 +23,16 @@ const taskController = {
         }
     },
 
+    getTaskById: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const task = await Task.findTaskById(id);
+            res.status(200).json({ task });
+        } catch (error) {
+            res.status(500).json({ message: "Gagal mengambil tugas..." });
+        }
+    },
+
     updateTask: async (req, res) => {
         const { id } = req.params;
         const { title, category, deadline, status } = req.body;

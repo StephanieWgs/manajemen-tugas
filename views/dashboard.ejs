@@ -82,7 +82,7 @@
           </div>
 
           <!-- Modal untuk edit tugas -->
-          <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+          <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -170,6 +170,84 @@
           document.getElementById("deadline").value = "";
           const modalTambah = bootstrap.Modal.getInstance(document.getElementById("modalTambah"));
           modalTambah.hide();
+          loadTasks();
+        }
+      }
+
+      // Fungsi untuk menampilkan modal edit tugas
+      async function showEditModal(taskId) {
+        const response = await fetch(`/api/tasks/${taskId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Data tugas yang diterima:", data);
+
+          document.getElementById("editTitle").value = data.task.title;
+          document.getElementById("editCategory").value = data.task.category;
+          // Konversi deadline agar tidak bergeser sehari
+          const utcDate = new Date(data.task.deadline); //Format dikirim dalam UTC
+          const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000); //Konversi ke local
+          document.getElementById("editDeadline").value = localDate.toISOString().split("T")[0]; //Biar ngak keambil jam, hanya ambil tanggal
+          document.getElementById("editStatus").value = data.task.status;
+
+          currentTaskId = taskId;
+          new bootstrap.Modal(document.getElementById("modalEdit")).show();
+        } else {
+          alert("Gagal mengambil data tugas.");
+        }
+      }
+
+      //Edit tugas
+      async function editTugas() {
+        const title = document.getElementById("editTitle").value;
+        const category = document.getElementById("editCategory").value;
+        const deadline = document.getElementById("editDeadline").value;
+        const status = document.getElementById("editStatus").value;
+
+        const response = await fetch(`/api/tasks/${currentTaskId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            a,
+          },
+          body: JSON.stringify({ title, category, deadline, status }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const modalEdit = bootstrap.Modal.getInstance(document.getElementById("modalEdit"));
+          modalEdit.hide();
+          loadTasks();
+        }
+      }
+
+      // Fungsi untuk menampilkan modal hapus tugas
+      async function showDeleteModal(taskId) {
+        currentTaskId = taskId;
+        new bootstrap.Modal(document.getElementById("modalHapus")).show();
+      }
+
+      //Hapus tugas
+      async function hapusTugas() {
+        const response = await fetch(`/api/tasks/${currentTaskId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const modalHapus = bootstrap.Modal.getInstance(document.getElementById("modalHapus"));
+          modalHapus.hide();
           loadTasks();
         }
       }
