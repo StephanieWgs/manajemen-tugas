@@ -22,12 +22,12 @@
             <h4 class="mb-1">Halo, Selamat Datang Kembali!</h4>
             <p class="mb-4 fs-6">Senang bisa bertemu dengan Anda <i class="bi bi-emoji-grin"></i></p>
 
-            <form action="/api/auth/login" method="POST" class="mt-3">
+            <form id="loginForm">
                 <div class="mb-3">
-                    <input type="text" class="form-control form-control-lg bg-light fs-6" name="username" placeholder="Username" required />
+                    <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" placeholder="Username" required />
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control form-control-lg bg-light fs-6" name="password" placeholder="Password" required />
+                    <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" placeholder="Password" required />
                 </div>
                 <button type="submit" class="btn btn-primary w-100 mt-5">Login</button>
             </form>
@@ -37,5 +37,27 @@
           </div>
       </div>
     </div>
+    <script>
+      document.getElementById("loginForm").addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          const response = await fetch("/api/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+              localStorage.setItem("token", data.token);
+              window.location.href = "/dashboard";
+          } else {
+              // Kalau gagal, tampilkan pesan kesalahan
+          }
+      });
+  </script>
   </body>
 </html>

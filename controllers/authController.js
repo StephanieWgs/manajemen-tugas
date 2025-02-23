@@ -30,8 +30,7 @@ const authController = {
       }
 
       const token = generateToken(user.id);
-      res.cookie("token", token, { httpOnly: true }); // Simpan token di cookie
-      res.redirect("/dashboard");
+      res.json({ token });
     } catch (error) {
       console.error("Error saat login:", error);
       res.status(500).json({ message: "Login Gagal" });
