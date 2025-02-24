@@ -7,9 +7,11 @@ const taskMiddleware = (req, res, next) => {
     return res.status(400).json({ message: "Semua field harus diisi!" });
   }
 
-  // Validasi tanggal
-  if (new Date(deadline).getTime() <= Date.now()) {
-    return res.status(400).json({ message: "Deadline harus lebih dari tanggal saat ini!" });
+  // Validasi tanggal deadline, deadline paling minimal hari ini
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set waktu ke 00:00:00 pada hari ini
+  if (new Date(deadline).getTime() < today.getTime()) {
+    return res.status(400).json({ message: "Deadline harus hari ini atau lebih!" });
   }
 
   // Validasi status hanya untuk update task, bukan tambah
