@@ -13,6 +13,7 @@ const initWebSocket = (server) => {
   });
 };
 
+// Fungsi untuk mengirim notifikasi ke semua klien
 const sendNotification = (message) => {
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {

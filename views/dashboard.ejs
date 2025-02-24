@@ -9,11 +9,15 @@
   </head>
   <body>
     <div class="d-flex vh-100">
+      <!-- Sisi Kiri -->
       <div class="py-4 box border-end d-flex flex-column justify-content-between align-items-center bg-white" style="width: 5%; height: 100vh">
         <div></div>
         <!-- Spacer atas -->
-        <button type="submit" class="btn btn-danger" onclick="logout()"><i class="bi bi-box-arrow-right"></i></button>
+        <button type="submit" class="btn btn-danger" onclick="showLogoutModal()"><i class="bi bi-box-arrow-right"></i></button>
       </div>
+      <!-- End Sisi Kiri -->
+
+      <!-- Sisi Kanan -->
       <div class="d-flex flex-column w-100">
         <div class="container flex-grow-1 my-4 bg-white shadow-sm p-4 border rounded">
           <div class="d-flex justify-content-between mt-2">
@@ -21,6 +25,7 @@
             <button class="btn btn-success" onclick="showAddModal()"><i class="bi bi-plus"></i> Tambah Tugas</button>
           </div>
           <div class="mt-4">
+            <!-- Tombol untuk memilih kategori -->
             <div class="dropdown">
               <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-filter"></i> Semua</button>
               <ul class="dropdown-menu">
@@ -30,8 +35,10 @@
                 <li><a class="dropdown-item" href="#">Pribadi</a></li>
               </ul>
             </div>
+            <!-- End Tombol kategori -->
           </div>
           <div class="mt-3">
+            <!-- Tabel daftar tugas -->
             <table class="table table-hover table-striped table-light rounded-3 overflow-hidden">
               <thead>
                 <tr>
@@ -45,6 +52,7 @@
               </thead>
               <tbody id="taskList"></tbody>
             </table>
+            <!-- End Tabel -->
           </div>
 
           <!-- Toast Container -->
@@ -55,6 +63,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
               </div>
               <div id="toast-body" class="toast-body"><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>
+            </div>
+          </div>
+
+          <!-- Modal untuk logout -->
+          <div class="modal fade" id="modalLogout" tabindex="-1" aria-labelledby="modalLogoutLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editTaskModalLabel">Konfirmasi Logout</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Apakah Anda yakin ingin logout?</div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                  <button type="button" class="btn btn-danger" onclick="logout()">Logout</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -151,8 +176,14 @@
           </div>
         </div>
       </div>
+      <!-- End Sisi Kanan -->
     </div>
     <script>
+      // Fungsi untuk menampilkan modal logout
+      function showLogoutModal() {
+        new bootstrap.Modal(document.getElementById("modalLogout")).show();
+      }
+
       // Fungsi untuk menampilkan modal tambah tugas
       function showAddModal() {
         new bootstrap.Modal(document.getElementById("modalTambah")).show();
@@ -183,6 +214,7 @@
           modalTambah.hide();
           loadTasks();
         } else {
+          // Kalau gagal, tampilkan pesan kesalahan
           const errorData = await response.json();
           showToast(errorData.message);
         }
@@ -239,6 +271,7 @@
           modalEdit.hide();
           loadTasks();
         } else {
+          // Kalau gagal, tampilkan pesan kesalahan
           const errorData = await response.json();
           showToast(errorData.message);
         }
@@ -283,7 +316,9 @@
         });
       });
 
+      // Kategori default: Semua
       let selectedCategory = "Semua";
+
       async function loadTasks() {
         const token = localStorage.getItem("token");
         try {
@@ -313,7 +348,7 @@
           }
 
           // Jika ada tugas
-          taskList.innerHTML = filteredTasks
+          taskList.innerHTML = filteredTasks 
             .map((task, index) => {
               // Format tanggal agar lebih rapi
               const deadlineFormatted = new Date(task.deadline).toLocaleDateString("id-ID", {
@@ -357,10 +392,11 @@
       // Cek token
       const token = localStorage.getItem("token");
       if (!token) {
-        window.location.href = "/";
+        window.location.href = "/"; // Jika tidak ada token, arahkan ke halaman login
       }
 
-      document.addEventListener("DOMContentLoaded", loadTasks);
+      // Panggil fungsi loadTasks saat halaman selesai dimuat
+      document.addEventListener("DOMContentLoaded", loadTasks); 
     </script>
 
     <script src="/script/script.js"></script>

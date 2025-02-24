@@ -2,6 +2,7 @@ const Task = require("../models/taskModel");
 const { sendNotification } = require("../websocket");
 
 const taskController = {
+    // Tambah tugas
     createTask: async (req, res) => {
         const { title, category, deadline} = req.body;
         const user_id = req.user.id;
@@ -14,7 +15,7 @@ const taskController = {
         }
     },
 
-
+    // Ambil semua tugas
     getTasks: async (req, res) => {
         const user_id = req.user.id;
         try {
@@ -25,6 +26,7 @@ const taskController = {
         }
     },
 
+    // Ambil tugas berdasarkan ID
     getTaskById: async (req, res) => {
         const { id } = req.params;
         try {
@@ -35,6 +37,7 @@ const taskController = {
         }
     },
 
+    // Ubah tugas
     updateTask: async (req, res) => {
         const { id } = req.params;
         const { title, category, deadline, status } = req.body;
