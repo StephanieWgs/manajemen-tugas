@@ -47,6 +47,17 @@
             </table>
           </div>
 
+          <!-- Toast Container -->
+          <div id="toast-container" class="position-fixed bottom-0 end-0 p-3">
+            <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-header">
+                <strong class="me-auto"><i class="bi bi-info-circle-fill"></i> Notifikasi</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+              <div id="toast-body" class="toast-body"><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>
+            </div>
+          </div>
+
           <!-- Modal untuk tambah tugas -->
           <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -142,6 +153,14 @@
       </div>
     </div>
     <script>
+      //Notifikasi
+      function showToast(message) {
+        const toastBody = document.getElementById("toast-body");
+        toastBody.textContent = message;
+        const toast = new bootstrap.Toast(document.getElementById("toast"));
+        toast.show();
+      }
+
       // Fungsi untuk menampilkan modal tambah tugas
       function showAddModal() {
         new bootstrap.Modal(document.getElementById("modalTambah")).show();
@@ -171,6 +190,9 @@
           const modalTambah = bootstrap.Modal.getInstance(document.getElementById("modalTambah"));
           modalTambah.hide();
           loadTasks();
+        } else {
+          const errorData = await response.json();
+          showToast(errorData.message);
         }
       }
 
@@ -224,6 +246,9 @@
           const modalEdit = bootstrap.Modal.getInstance(document.getElementById("modalEdit"));
           modalEdit.hide();
           loadTasks();
+        } else {
+          const errorData = await response.json();
+          showToast(errorData.message);
         }
       }
 

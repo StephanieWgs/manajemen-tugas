@@ -6,3 +6,7 @@ body {
 .box-area {
   width: 930px;
 }
+
+#toast-container {
+  z-index: 9999999;
+}
