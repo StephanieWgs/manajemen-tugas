@@ -5,8 +5,15 @@ const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 require("dotenv").config();
 
+const http = require("http");
+
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 3000;
+
+// Websocket
+const { initWebSocket } = require("./websocket");
+initWebSocket(server);
 
 //Set EJS sebagai view engine
 app.set("view engine", "ejs");
@@ -35,4 +42,4 @@ app.get("/dashboard", (req, res) => {
   res.render("dashboard");
 });
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+server.listen(port, () => console.log(`Server running on port ${port}`));

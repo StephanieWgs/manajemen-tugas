@@ -153,14 +153,6 @@
       </div>
     </div>
     <script>
-      //Notifikasi
-      function showToast(message) {
-        const toastBody = document.getElementById("toast-body");
-        toastBody.textContent = message;
-        const toast = new bootstrap.Toast(document.getElementById("toast"));
-        toast.show();
-      }
-
       // Fungsi untuk menampilkan modal tambah tugas
       function showAddModal() {
         new bootstrap.Modal(document.getElementById("modalTambah")).show();
@@ -371,6 +363,7 @@
       document.addEventListener("DOMContentLoaded", loadTasks);
     </script>
 
+    <script src="/script/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>
